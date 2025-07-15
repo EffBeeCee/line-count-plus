@@ -491,6 +491,7 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 		
 		-- Get data without factoring in settings
 		local newTotal = {
+			previousTotalScripts + scriptsChange,
 			dataChange.RegularLines + previousTotal[2],
 			dataChange.CommentLines + previousTotal[3],
 			dataChange.SpaceLines + previousTotal[4],
@@ -521,9 +522,10 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 		productivityData.ProductivityDay = dayData
 		plugin:SetSetting("ProductivityDay", productivityData.ProductivityDay)
 	end
-
+	
 	local dayScripts, dayLines, dayChars, dayAllData = GetProductivity(dayData)
 	
+	table.insert(dayAllData, unixTimeOfDayStart)
 	productivityData.ProductivityDay = dayAllData
 	plugin:SetSetting("ProductivityDay", productivityData.ProductivityDay)
 	
@@ -555,6 +557,7 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 
 	local weekScripts, weekLines, weekChars, weekAllData = GetProductivity(weekData)
 
+	table.insert(weekAllData, unixTimeOfWeekStart)
 	productivityData.ProductivityWeek = weekAllData
 	plugin:SetSetting("ProductivityWeek", productivityData.ProductivityWeek)
 
@@ -586,6 +589,7 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 
 	local monthScripts, monthLines, monthChars, monthAllData = GetProductivity(monthData)
 	
+	table.insert(monthAllData, unixTimeOfMonthStart)
 	productivityData.ProductivityMonth = monthAllData
 	plugin:SetSetting("ProductivityMonth", productivityData.ProductivityMonth)
 
