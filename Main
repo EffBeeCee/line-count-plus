@@ -30,7 +30,7 @@ local toolbar = plugin:CreateToolbar("Line Count+")
 local openPluginButton = toolbar:CreateButton(
 	"Line Count Plus",
 	"Launch line count plus",
-	"rbxassetid://<Asset ID Redacted>"
+	"rbxassetid://101738058022875"
 )
 
 -- CREATE WIDGET --
@@ -326,8 +326,6 @@ local function UpdateAllData(locationName: string, includeComments: boolean, inc
 		-- Update GUI
 		local GUIRow = allDataTableGUI:FindFirstChild(scriptType)
 		
-		if not GUIRow then print("Test: ", scriptType, row, allDataTableGUI:FindFirstChild(scriptType), allDataTableGUI:GetChildren(), allDataTableGUI) end
-		
 		if not row[1] then row[1] = 0 end
 		if not row[2] then row[2] = 0 end
 		if not row[3] then row[3] = 0 end
@@ -462,7 +460,7 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 	
 	defaultIndexedTable[8] = os.time()
 	
-	-- Returns the totals for scripts/lines/chars added within the timeframe
+	-- Returns the totals for scripts/lines/chars added within the timeframe and the new data table
 	local function GetProductivity(previousTotal: {})
 		local linesChange, charsChange = GetLinesCharacters(
 			dataChange.RegularLines,
@@ -486,11 +484,22 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 		
 		local previousTotalScripts = previousTotal[1]
 		
+		-- Get data factoring in settings
 		local newTotalScripts = previousTotalScripts + scriptsChange
 		local newTotalLines = previousTotalLines + linesChange
 		local newTotalChars = previousTotalChars + charsChange
 		
-		return newTotalScripts, newTotalLines, newTotalChars
+		-- Get data without factoring in settings
+		local newTotal = {
+			dataChange.RegularLines + previousTotal[2],
+			dataChange.CommentLines + previousTotal[3],
+			dataChange.SpaceLines + previousTotal[4],
+			dataChange.RegularChars + previousTotal[5],
+			dataChange.CommentChars + previousTotal[6],
+			dataChange.SpaceChars + previousTotal[7]
+		}
+		
+		return newTotalScripts, newTotalLines, newTotalChars, newTotal
 	end
 	
 	-- Update day timeframe GUI --
@@ -513,7 +522,10 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 		plugin:SetSetting("ProductivityDay", productivityData.ProductivityDay)
 	end
 
-	local dayScripts, dayLines, dayChars = GetProductivity(dayData)
+	local dayScripts, dayLines, dayChars, dayAllData = GetProductivity(dayData)
+	
+	productivityData.ProductivityDay = dayAllData
+	plugin:SetSetting("ProductivityDay", productivityData.ProductivityDay)
 	
 	-- Update GUI
 	local daySection = productivityTableGUI:FindFirstChild("Day")
@@ -541,7 +553,10 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 		plugin:SetSetting("ProductivityWeek", productivityData.ProductivityWeek)
 	end
 
-	local weekScripts, weekLines, weekChars = GetProductivity(weekData)
+	local weekScripts, weekLines, weekChars, weekAllData = GetProductivity(weekData)
+
+	productivityData.ProductivityWeek = weekAllData
+	plugin:SetSetting("ProductivityWeek", productivityData.ProductivityWeek)
 
 	-- Update GUI
 	local weekSection = productivityTableGUI:FindFirstChild("Week")
@@ -569,7 +584,10 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 		plugin:SetSetting("ProductivityMonth", productivityData.ProductivityMonth)
 	end
 
-	local monthScripts, monthLines, monthChars = GetProductivity(monthData)
+	local monthScripts, monthLines, monthChars, monthAllData = GetProductivity(monthData)
+	
+	productivityData.ProductivityMonth = monthAllData
+	plugin:SetSetting("ProductivityMonth", productivityData.ProductivityMonth)
 
 	-- Update GUI
 	local monthSection = productivityTableGUI:FindFirstChild("Month")
@@ -589,7 +607,10 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 	end
 	
 	if recording or resetRecording then
-		local recordingScripts, recordingLines, recordingChars = GetProductivity(recordingData)
+		local recordingScripts, recordingLines, recordingChars, recordingAllData = GetProductivity(recordingData)
+		
+		productivityData.ProductivityRecording = recordingAllData
+		plugin:SetSetting("ProductivityRecording", productivityData.ProductivityRecording)
 		
 		-- Update GUI
 		local recordingSection = productivityTableGUI:FindFirstChild("Recording")
@@ -606,8 +627,8 @@ end
 local function ListenForSettingsClicks()
 	-- RBLX assets --
 	
-	local CHECKBOX_CHECKED_ID = "rbxassetid://<Asset ID Redacted>"
-	local CHECKBOX_UNCHECKED_ID = "rbxassetid://<Asset ID Redacted>"
+	local CHECKBOX_CHECKED_ID = "rbxassetid://76303270887070"
+	local CHECKBOX_UNCHECKED_ID = "rbxassetid://115676850649048"
 	
 	local function GetCheckboxID(checked: boolean)
 		if checked then
