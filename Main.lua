@@ -497,7 +497,8 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 			dataChange.SpaceLines + previousTotal[4],
 			dataChange.RegularChars + previousTotal[5],
 			dataChange.CommentChars + previousTotal[6],
-			dataChange.SpaceChars + previousTotal[7]
+			dataChange.SpaceChars + previousTotal[7],
+			previousTotal[8]
 		}
 		
 		return newTotalScripts, newTotalLines, newTotalChars, newTotal
@@ -525,7 +526,6 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 	
 	local dayScripts, dayLines, dayChars, dayAllData = GetProductivity(dayData)
 	
-	table.insert(dayAllData, unixTimeOfDayStart)
 	productivityData.ProductivityDay = dayAllData
 	plugin:SetSetting("ProductivityDay", productivityData.ProductivityDay)
 	
@@ -557,7 +557,6 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 
 	local weekScripts, weekLines, weekChars, weekAllData = GetProductivity(weekData)
 
-	table.insert(weekAllData, unixTimeOfWeekStart)
 	productivityData.ProductivityWeek = weekAllData
 	plugin:SetSetting("ProductivityWeek", productivityData.ProductivityWeek)
 
@@ -589,7 +588,6 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 
 	local monthScripts, monthLines, monthChars, monthAllData = GetProductivity(monthData)
 	
-	table.insert(monthAllData, unixTimeOfMonthStart)
 	productivityData.ProductivityMonth = monthAllData
 	plugin:SetSetting("ProductivityMonth", productivityData.ProductivityMonth)
 
