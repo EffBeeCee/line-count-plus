@@ -1,5 +1,6 @@
 -- GET SERVICES (services required for script searching) --
 local Selection = game:GetService("Selection")
+local RunService = game:GetService("RunService")
 
 local Players = game:GetService("Players")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
@@ -850,8 +851,10 @@ local function ListenForSettingsClicks()
 	
 	task.spawn(function()
 		while true do
-			UpdateAllData(allDataLocation, allDataIncludeComments, allDataIncludeSpaces, allDataIncludeDuplicates)
-			UpdateProductivityData(productivityIncludeComments, productivityIncludeSpaces, recordingNow, false)
+			if RunService:IsEdit() then
+				UpdateAllData(allDataLocation, allDataIncludeComments, allDataIncludeSpaces, allDataIncludeDuplicates)
+				UpdateProductivityData(productivityIncludeComments, productivityIncludeSpaces, recordingNow, false)
+			end
 			
 			task.wait(2)
 		end
