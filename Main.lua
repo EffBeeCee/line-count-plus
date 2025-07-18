@@ -57,7 +57,7 @@ GUI.Parent = widget
 local dataSection = GUI:FindFirstChild("Data")
 local productivitySection = GUI:FindFirstChild("Productivity")
 
-local allDataTableGUI = dataSection:FindFirstChild("DataTable")
+local allDataTableGUI = dataSection:WaitForChild("DataTable")
 local allDataIncludeSpacesGUI = dataSection:FindFirstChild("IncludeSpaces")
 local allDataIncludeCommentsGUI = dataSection:FindFirstChild("IncludeComments")
 local allDataIncludeDuplicatesGUI = dataSection:FindFirstChild("IncludeDuplicates")
@@ -851,7 +851,15 @@ local function ListenForSettingsClicks()
 	
 	task.spawn(function()
 		while true do
-			if RunService:IsEdit() then
+			-- Make sure the plugin is not running during runtime
+			
+			local inEditMode = RunService:IsEdit()
+			
+			-- Make sure plugin is not running while widget is closed
+			
+			local widgetClosed = widget.Enabled
+			
+			if inEditMode and widgetClosed then
 				UpdateAllData(allDataLocation, allDataIncludeComments, allDataIncludeSpaces, allDataIncludeDuplicates)
 				UpdateProductivityData(productivityIncludeComments, productivityIncludeSpaces, recordingNow, false)
 			end
