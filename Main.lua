@@ -431,9 +431,11 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 			local utcOffset = os.date("*t").hour - os.date("!*t").hour
 			local utcOffsetSecs = utcOffset * 3600
 			
-			local zerothWeekUnixEpochTime = 86400 * 4 -- Unix epoch was on a thursday (offset to monday)
-			local lastTimeUnixEpochWeeks = math.floor(((lastTime + zerothWeekUnixEpochTime + utcOffset) / 86400) / 7)
-			local nowUnixEpochWeeks = math.floor(((os.time() + zerothWeekUnixEpochTime + utcOffset) / 86400) / 7)
+			-- Offset to Monday instead of Sunday
+			local dayOffset = 86400
+			
+			local lastTimeUnixEpochWeeks = os.date("%w", lastTime + utcOffsetSecs + dayOffset)
+			local nowUnixEpochWeeks = os.date("%w", os.time() + utcOffsetSecs + dayOffset)
 			
 			if lastTimeUnixEpochWeeks ~= nowUnixEpochWeeks then
 				return true -- New week
