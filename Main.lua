@@ -240,7 +240,11 @@ local function UpdateAllData(locationName: string, includeComments: boolean, inc
 	local function GetScriptType(instance: Instance)
 		local scriptType
 		
-		if instance:IsA("Script") then -- LegacyServer, Server, Client, or Plugin
+		if instance:IsA("LocalScript") then -- LegacyLocal
+			scriptType = "LegacyLocal"
+		elseif instance:IsA("ModuleScript") then -- Module
+			scriptType = "Module"
+		elseif instance:IsA("Script") then -- LegacyServer, Server, Client, or Plugin
 			if instance.RunContext == Enum.RunContext.Legacy then
 				scriptType = "LegacyServer"
 			elseif instance.RunContext == Enum.RunContext.Server then
@@ -250,10 +254,6 @@ local function UpdateAllData(locationName: string, includeComments: boolean, inc
 			elseif instance.RunContext == Enum.RunContext.Plugin then
 				scriptType = "Plugin"
 			end
-		elseif instance:IsA("LocalScript") then -- LegacyLocal
-			scriptType = "LegacyLocal"
-		elseif instance:IsA("ModuleScript") then -- Module
-			scriptType = "Module"
 		end
 		
 		return scriptType
