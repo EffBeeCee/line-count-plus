@@ -350,6 +350,7 @@ local function UpdateAllData(locationName: string, includeComments: boolean, inc
 end
 
 local previousProductivityData
+local currentGameID = game.PlaceId
 
 -- Updates the productivity widget GUI
 local function UpdateProductivityData(includeComments: boolean, includeSpaces: boolean, recording: boolean, resetRecording: boolean)
@@ -386,8 +387,14 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 		end
 	end
 	
+	-- Don't update data if a different game was opened
+	
+	local newGame = currentGameID ~= game.PlaceId
+	
+	-- Update currentGameID
+	
 	-- Get change in data since last update
-	if not previousProductivityData then previousProductivityData = dataNow end
+	if (not previousProductivityData) or newGame then previousProductivityData = dataNow end
 	
 	local dataChange = {}
 	
@@ -395,8 +402,9 @@ local function UpdateProductivityData(includeComments: boolean, includeSpaces: b
 		dataChange[index] = data - previousProductivityData[index]
 	end
 	
-	-- Set previous data to data now (already used and not required anymore)
+	-- Update previous data/game ID (not required anymore)
 	previousProductivityData = dataNow
+	currentGameID = game.PlaceId
 	
 	-- Condenses line/character data into total lines and total chars using user settings
 	local function GetLinesCharacters(regularLines: number, commentLines: number, spaceLines: number, regularChars: number, commentChars: number, spaceChars: number)
