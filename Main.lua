@@ -867,9 +867,9 @@ local function ListenForSettingsClicks()
 			
 			-- Make sure plugin is not running while widget is closed
 			
-			local widgetClosed = widget.Enabled
+			local widgetOpen = widget.Enabled
 			
-			if inEditMode and widgetClosed then
+			if inEditMode and widgetOpen then
 				UpdateAllData(allDataLocation, allDataIncludeComments, allDataIncludeSpaces, allDataIncludeDuplicates)
 				UpdateProductivityData(productivityIncludeComments, productivityIncludeSpaces, recordingNow, false)
 			end
